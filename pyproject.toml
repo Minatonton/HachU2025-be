@@ -33,7 +33,7 @@ gunicorn = "^23.0.0"
 psycopg = {extras = ["c"], version = "^3.2.5"}
 python = "^3.10"
 python-dotenv = "^1.0.1"
-weaviate = "^0.1.2"
+weaviate-client = "^4.11.1"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "*"
