@@ -1,0 +1,73 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
+
+[tool.coverage.report]
+skip_empty = true
+
+[tool.coverage.run]
+branch = true
+omit = [
+  "*/test*.py",
+  "*/tests/*",
+  "manage.py"
+]
+
+[tool.poetry]
+authors = ["DeMiA inc."]
+description = ""
+name = "hack-u-2025-be"
+readme = "README.md"
+version = "0.1.0"
+
+[tool.poetry.dependencies]
+dj-database-url = "^2.3.0"
+dj-rest-auth = "^7.0.1"
+django = {extras = ["argon2"], version = "^5.1.6"}
+django-cors-headers = "^4.7.0"
+django-storages = {extras = ["s3"], version = "^1.14.5"}
+djangorestframework = "^3.15.2"
+djangorestframework-simplejwt = "^5.5.0"
+drf-spectacular = "^0.28.0"
+gunicorn = "^23.0.0"
+psycopg = {extras = ["c"], version = "^3.2.5"}
+python = "^3.10"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "*"
+ruff = "*"
+toml-sort = "*"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+exclude = ["**/migrations/*"]
+ignore = ["RUF012", "SIM105", "UP038"]
+select = [
+  "A",
+  "B",
+  "C4",
+  "C90",
+  "DJ",
+  "DTZ",
+  "E",
+  "F",
+  "I",
+  "ISC",
+  "N",
+  "RET",
+  "RUF",
+  "SIM",
+  "TID",
+  "UP",
+  "W"
+]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["id"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/migrations/*" = ["E501"]
