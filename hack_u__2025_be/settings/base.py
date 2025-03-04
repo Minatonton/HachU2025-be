@@ -20,16 +20,21 @@ ALLOWED_HOSTS = split_to_list(os.getenv("ALLOWED_HOSTS", ""))
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
+    "django.contrib.sites",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "allauth",
     "rest_framework",
     "rest_framework.authtoken",
+    "rest_framework_simplejwt",
     "drf_spectacular",
     "corsheaders",
     "dj_rest_auth",
-    "rest_framework_simplejwt",
+    "dj_rest_auth.registration",
+    "account",
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -94,9 +99,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ja"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Tokyo"
 
 USE_I18N = True
 
@@ -145,6 +150,7 @@ ADMINS = list(
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_RENDERER_CLASSES": [
         "hack_u__2025_be.renderers.UTF8JSONRenderer",
@@ -157,10 +163,26 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "access-token",
     "JWT_AUTH_REFRESH_COOKIE": "refresh-token",
+    "JWT_AUTH_HTTPONLY": False,
+    "OLD_PASSWORD_FIELD_ENABLED": True,
 }
 
 # djangorestframework-simplejwt
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": datetime.timedelta(hours=1),
     "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=14),
+    "USER_ID_CLAIM": "id",
 }
+
+
+AUTH_USER_MODEL = "account.User"
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+SITE_ID = 1
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
