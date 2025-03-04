@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
@@ -33,7 +35,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "dj_rest_auth",
     "dj_rest_auth.registration",
-    "account",
+    "accounts",
     "api",
 ]
 
@@ -47,6 +49,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "hack_u__2025_be.urls"
@@ -175,8 +178,8 @@ SIMPLE_JWT = {
 }
 
 
-AUTH_USER_MODEL = "account.User"
-ACCOUNT_AUTHENTICATION_METHOD = "email"
+AUTH_USER_MODEL = "accounts.User"
+ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USERNAME_REQUIRED = False
