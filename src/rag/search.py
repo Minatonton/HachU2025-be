@@ -3,9 +3,9 @@ from src.rag.model import ImageInfo
 from weaviate.classes.query import MetadataQuery
 from weaviate.collections.classes.internal import QueryReturn
 
-def search(query: str, limit:int=10, collection:str="image_sample") -> list[ImageInfo]:
-    questions = client.collections.get(collection)
-    response = questions.query.near_text(
+def search(query: str, limit:int=10, collection_name:str="text_mode_sample") -> list[ImageInfo]:
+    collections = client.collections.get(collection_name)
+    response = collections.query.near_text(
         query=query,  # The model provider integration will automatically vectorize the query
         limit=limit
     )
@@ -13,11 +13,11 @@ def search(query: str, limit:int=10, collection:str="image_sample") -> list[Imag
     return [ImageInfo(**obj.properties) for obj in response.objects]  # type: ignore
 
 def search_with_filter(
-    query: str, limit:int=10, collection:str="image_sample", certainty_threshold: float | None = None
+    query: str, limit:int=10, collection_name:str="text_mode_sample", certainty_threshold: float | None = None
 ) -> list[ImageInfo]:  # ベクトル検索
-    questions = client.collections.get(collection)
+    collections = client.collections.get(collection_name)
 
-    response = questions.query.near_text(
+    response = collections.query.near_text(
         query=query, limit=limit, return_metadata=MetadataQuery.full()
     )
     assert isinstance(response, QueryReturn)
@@ -35,11 +35,11 @@ def search_with_filter(
 
 
 def search_hybrid(
-    query: str, limit:int=10, collection:str="image_sample", certainty_threshold: float | None = None
+    query: str, limit:int=10, collection_name:str="text_mode_sample", certainty_threshold: float | None = None
 ) -> list[ImageInfo]:  # ハイブリッド検索
-    questions = client.collections.get(collection)
+    collections = client.collections.get(collection_name)
 
-    response = questions.query.hybrid(
+    response = collections.query.hybrid(
         query=query, limit=limit, return_metadata=MetadataQuery.full()
     )
     assert isinstance(response, QueryReturn)
@@ -57,11 +57,11 @@ def search_hybrid(
 
 
 def search_bm25(
-    query: str, limit:int=10, collection:str="image_sample", certainty_threshold: float | None = None
+    query: str, limit:int=10, collection_name:str="text_mode_sample", certainty_threshold: float | None = None
 ) -> list[ImageInfo]:  # BM25
-    questions = client.collections.get(collection)
+    collections = client.collections.get(collection_name)
 
-    response = questions.query.bm25(
+    response = collections.query.bm25(
         query=query, limit=limit, return_metadata=MetadataQuery.full()
     )
     assert isinstance(response, QueryReturn)
