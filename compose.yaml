@@ -26,8 +26,13 @@ services:
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
       PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
       DEFAULT_VECTORIZER_MODULE: "text2vec-openai"
-      ENABLE_MODULES: "text2vec-openai"
+      ENABLE_MODULES: "text2vec-openai,multi2vec-clip"
       CLUSTER_HOSTNAME: "node1"
+      CLIP_INFERENCE_API: http://multi2vec-clip:8080  # Set the inference API endpoint
+  multi2vec-clip:  # Set the name of the inference container
+    image: cr.weaviate.io/semitechnologies/multi2vec-clip:openai-clip-vit-base-patch16
+    environment:
+      ENABLE_CUDA: 0  # Set to 1 to enable
 
 volumes:
   pgdata:
