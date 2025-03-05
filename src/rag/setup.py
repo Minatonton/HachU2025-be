@@ -50,6 +50,6 @@ def setup(collection_name: str,search_model:SearchModel=SearchModel.TEXT)->Colle
         return collection
 
 if __name__ == "__main__":
-    collection = setup("text_mode_sample",search_model=SearchModel.TEXT)
+    collection = setup("text_search_model_sample",search_model=SearchModel.TEXT)
     assert isinstance(collection, Collection)
     client.close()

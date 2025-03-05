@@ -3,7 +3,7 @@ from src.rag.model import ImageInfo
 from weaviate.classes.query import MetadataQuery
 from weaviate.collections.classes.internal import QueryReturn
 
-def search(query: str, limit:int=10, collection_name:str="text_mode_sample") -> list[ImageInfo]:
+def search(query: str, limit:int=10, collection_name:str="text_search_model_sample") -> list[ImageInfo]:
     collections = client.collections.get(collection_name)
     response = collections.query.near_text(
         query=query,  # The model provider integration will automatically vectorize the query
@@ -13,7 +13,7 @@ def search(query: str, limit:int=10, collection_name:str="text_mode_sample") -> 
     return [ImageInfo(**obj.properties) for obj in response.objects]  # type: ignore
 
 def search_with_filter(
-    query: str, limit:int=10, collection_name:str="text_mode_sample", certainty_threshold: float | None = None
+    query: str, limit:int=10, collection_name:str="text_search_model_sample", certainty_threshold: float | None = None
 ) -> list[ImageInfo]:  # ベクトル検索
     collections = client.collections.get(collection_name)
 
@@ -35,7 +35,7 @@ def search_with_filter(
 
 
 def search_hybrid(
-    query: str, limit:int=10, collection_name:str="text_mode_sample", certainty_threshold: float | None = None
+    query: str, limit:int=10, collection_name:str="text_search_model_sample", certainty_threshold: float | None = None
 ) -> list[ImageInfo]:  # ハイブリッド検索
     collections = client.collections.get(collection_name)
 
@@ -57,7 +57,7 @@ def search_hybrid(
 
 
 def search_bm25(
-    query: str, limit:int=10, collection_name:str="text_mode_sample", certainty_threshold: float | None = None
+    query: str, limit:int=10, collection_name:str="text_search_model_sample", certainty_threshold: float | None = None
 ) -> list[ImageInfo]:  # BM25
     collections = client.collections.get(collection_name)
 

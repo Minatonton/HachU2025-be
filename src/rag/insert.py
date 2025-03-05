@@ -36,6 +36,6 @@ def insert(collection: Collection, data: list[ImageInfo],search_model:SearchMode
 if __name__ == "__main__":
     search_model=SearchModel.TEXT
     data = [ImageInfo(image_path="src/data/dog.png", info="This is a picture of dog"), ImageInfo(image_path="src/data/cat.png", info="This is a picture of cat")]
-    collection = setup("text_mode_sample",search_model=search_model)
+    collection = setup("text_search_model_sample",search_model=search_model)
     insert(collection, data,search_model=search_model)
     client.close()
