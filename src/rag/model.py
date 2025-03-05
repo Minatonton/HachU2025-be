@@ -7,6 +7,6 @@ class ImageInfo(BaseModel):
 
     def __str__(self) -> str:
         return f"""
-画像（Path）：　{self.image_path}
-情報：　{self.info}
+画像(Path): {self.image_path}
+情報: {self.info}
         """

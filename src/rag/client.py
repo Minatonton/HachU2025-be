@@ -1,8 +1,8 @@
 import os
 
 import weaviate
-from weaviate.config import AdditionalConfig, ConnectionConfig
 from dotenv import load_dotenv
+from weaviate.config import AdditionalConfig, ConnectionConfig
 
 load_dotenv()
 # client = weaviate.connect_to_wcs(
