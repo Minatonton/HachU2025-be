@@ -39,7 +39,7 @@ class RAG:
         image_search_results: list[ImageInfo],
         chat_history: list[str],
     ) -> str:
-        # 画像情報も載せておく（TPMの上限上、あまりしたくはない）
+        # 画像情報も載せておく(TPMの上限上、あまりしたくはない)
         prompt_template = Template("""
         会話履歴:
         {{chat_history}}
@@ -86,6 +86,6 @@ if __name__ == "__main__":
         collection_name_text="text_search_model_sample",
         collection_name_image="image_search_model_sample",
     )
-    response = rag.get_resonse(["こんにちは", "こんばんは。犬の画像が欲しいけど、どっかある？"])
+    response = rag.get_resonse(["こんにちは", "こんばんは。犬の画像が欲しいけど、どっかある?"])
     print(response)
     client.close()
