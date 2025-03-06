@@ -38,6 +38,8 @@ def get_text_from_image(image_path: Path) -> str:
         ],
     )
 
+    assert isinstance(response.choices[0].message.content, str)
+
     return response.choices[0].message.content
 
 
