@@ -21,8 +21,6 @@ class RAG:
         image_search_results = self.get_info_from_rag(
             mode=SearchModel.IMAGE_TEXT, query=chat_history[-1]
         )
-        print(text_search_results)
-        print(image_search_results)
         prompt = self.get_promt(text_search_results, image_search_results, chat_history)
         return self.chat_from_info(prompt)
 
@@ -62,7 +60,6 @@ class RAG:
             chat_history=chat_history,
             to_base64=to_base64,
         )
-        print(dedent(prompt))
         return dedent(prompt)
 
     def chat_from_info(self, prompt: str) -> RagResponse:
@@ -77,7 +74,6 @@ class RAG:
             response_format=RagResponse,
         )
         formed_response = response.choices[0].message.parsed
-        print(formed_response)
         return RagResponse(
             response=formed_response.response,
             used_info_by_image=formed_response.used_info_by_image,
