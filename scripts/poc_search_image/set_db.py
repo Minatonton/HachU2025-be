@@ -1,8 +1,3 @@
-import sys
-
-sys.path.append("/home/ri4385/emuni/hack_u_2025/HachU2025-be/")
-
-
 from pathlib import Path
 
 from scripts.image_to_text import get_text_from_image
