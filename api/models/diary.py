@@ -20,6 +20,7 @@ class Diary(models.Model):
         default="",
     )
     date = models.DateField("日付", auto_now_add=True)
+    image = models.ImageField("写真", upload_to="image/diary", blank=True)
 
     class Meta:
         verbose_name = "日記"
