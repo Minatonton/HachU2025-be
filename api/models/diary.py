@@ -13,6 +13,12 @@ class Diary(models.Model):
         related_name="diaries",
         verbose_name="ユーザー",
     )
+    title = models.CharField(
+        "タイトル",
+        max_length=200,
+        blank=True,
+        default="",
+    )
     content = models.CharField(
         "内容",
         max_length=10000,
