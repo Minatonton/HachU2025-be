@@ -12,10 +12,34 @@ class ImageInfo(BaseModel):
         """
 
 
+class Base64Info(BaseModel):
+    base64_content: str
+    info: str
+
+    def __str__(self) -> str:
+        return f"""
+Base64: {self.base64_content}
+情報: {self.info}
+        """
+
+
 class RagResponse(BaseModel):
     response: str
     used_info_by_image: list[ImageInfo]
     used_info_by_text: list[ImageInfo]
+
+    def __str__(self) -> str:
+        return f"""
+回答: {self.response}
+使用した画像情報: {self.used_info_by_image}
+使用したテキスト情報: {self.used_info_by_text}
+        """
+
+
+class Base64RagResponse(BaseModel):
+    response: str
+    used_info_by_image: list[Base64Info]
+    used_info_by_text: list[Base64Info]
 
     def __str__(self) -> str:
         return f"""
