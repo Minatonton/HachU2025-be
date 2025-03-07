@@ -9,7 +9,7 @@ class DiaryCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Diary
-        fields = ["id", "user", "content", "date", "image"]
+        fields = ["id", "user", "title", "content", "date", "image"]
 
 
 class DiarySerializer(serializers.ModelSerializer):
@@ -18,4 +18,4 @@ class DiarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Diary
-        fields = ["id", "content", "date", "image"]
+        fields = ["id", "title", "content", "date", "image"]
