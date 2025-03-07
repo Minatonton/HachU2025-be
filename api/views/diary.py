@@ -4,20 +4,20 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.models import Diary
 from api.serializers.diary import DiaryCreateSerializer, DiarySerializer
-from src.rag.insert import insert_base64
-from src.rag.model import Base64Info
+from src.rag.insert import insert
+from src.rag.model import ImageInfo
 from src.rag.search_model import SearchModel
-from src.rag.setup import setup_base64_collection
-from src.rag.utils import get_text_from_base64
+from src.rag.setup import setup
+from src.rag.utils import get_text_from_image
 
 
 class DiaryViewSet(ModelViewSet):
     queryset = Diary.objects.all()
     serializer_class = DiarySerializer
-    text_collection_name = "text_base64_search_model_sample"
-    image_collection_name = "image_base64_search_model_sample"
-    text_collection = setup_base64_collection(text_collection_name)
-    image_collection = setup_base64_collection(image_collection_name)
+    text_collection_name = "text_search_model_sample"
+    image_collection_name = "image_search_model_sample"
+    text_collection = setup(text_collection_name)
+    image_collection = setup(image_collection_name)
 
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)
@@ -29,19 +29,23 @@ class DiaryViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         request.data.update(user=request.user.pk)
-        base64_content = request.data["image"]
-        info = get_text_from_base64(base64_content)
-        insert_base64(
+        created_data = super().create(request, *args, **kwargs)
+        image_content = request.data["image"]
+        image_url = created_data.data["image"] if image_content else ""
+        info = get_text_from_image(image_url)
+        insert(
             self.text_collection,
-            [Base64Info(base64_content=base64_content, info=info)],
+            [ImageInfo(image_path=image_url, info=info)],
             SearchModel.TEXT,
         )
-        insert_base64(
-            self.image_collection,
-            [Base64Info(base64_content=base64_content, info=info)],
-            SearchModel.IMAGE_TEXT,
-        )
-        return super().create(request, *args, **kwargs)
+        # 画像があれば、画像情報をRAG検索出来るように保存
+        if image_content:
+            insert(
+                self.image_collection,
+                [ImageInfo(image_path=image_url, info=info)],
+                SearchModel.IMAGE_TEXT,
+            )
+        return created_data
 
     def retrieve(self, request, *args, **kwargs):
         date = self.kwargs.get("pk")

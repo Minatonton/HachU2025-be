@@ -1,7 +1,7 @@
 from weaviate.collections.collection import Collection
 
 from src.rag.client import client
-from src.rag.model import Base64Info, ImageInfo
+from src.rag.model import ImageInfo
 from src.rag.search_model import SearchModel
 from src.rag.setup import setup
 from src.rag.utils import to_base64
@@ -28,24 +28,6 @@ def insert(
                     # vector=vector  # Optionally provide a pre-obtained vector
                 )
 
-    elif search_model == SearchModel.TEXT:
-        data_for_insert = [info.model_dump() for info in data]
-        collection.data.insert_many(data_for_insert)
-
-
-def insert_base64(
-    collection: Collection,
-    data: list[Base64Info],
-    search_model: SearchModel = SearchModel.IMAGE_TEXT,
-) -> None:
-    if search_model == SearchModel.IMAGE_TEXT:
-        with collection.batch.dynamic() as batch:
-            for src_obj in data:
-                weaviate_obj = {
-                    "info": src_obj.info,
-                    "base64_content": src_obj.base64_content,
-                }
-                batch.add_object(properties=weaviate_obj)
     elif search_model == SearchModel.TEXT:
         data_for_insert = [info.model_dump() for info in data]
         collection.data.insert_many(data_for_insert)
