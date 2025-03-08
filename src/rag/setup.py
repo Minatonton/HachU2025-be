@@ -8,8 +8,9 @@ from src.rag.search_model import SearchModel
 
 def setup(collection_name: str, search_model: SearchModel = SearchModel.TEXT) -> Collection:
     if client.collections.exists(collection_name):
-        client.close()
-        raise ValueError(f"Collection {collection_name} already exists")
+        print(f"Collection {collection_name} already exists")
+        return client.collections.get(collection_name)
+
     if search_model == SearchModel.IMAGE_TEXT:
         collection = client.collections.create(
             name=collection_name,
