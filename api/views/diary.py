@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -47,7 +48,7 @@ class DiaryViewSet(ModelViewSet):
                 [ImageInfo(image_path=image_url, info=info)],
                 SearchModel.IMAGE_TEXT,
             )
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, *args, **kwargs):
         date = self.kwargs.get("pk")
