@@ -25,7 +25,7 @@ class RAG:
             mode=SearchModel.IMAGE_TEXT, query=chat_history[-1].content
         )
         prompt = self.get_promt(text_search_results, image_search_results, chat_history)
-        return self.chat_from_info(prompt, image_search_results)
+        return self.chat_from_info(prompt, text_search_results, image_search_results)
 
     def get_info_from_rag(
         self, mode: SearchModel, query: str, limit_text: int = 1, limit_image: int = 1
