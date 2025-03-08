@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.models import Diary
@@ -19,3 +21,9 @@ class DiaryViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         request.data.update(user=request.user.pk)
         return super().create(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        date = self.kwargs.get("pk")
+        instance = get_object_or_404(Diary, date=date)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

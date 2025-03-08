@@ -21,10 +21,11 @@ class Chat(models.Model):
         blank=True,
         default="",
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = "セクション"
-        verbose_name_plural = "セクション"
+        verbose_name = "チャット"
+        verbose_name_plural = "チャット"
 
     def __str__(self) -> str:
         return str(self.id)

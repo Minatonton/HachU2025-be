@@ -3,19 +3,21 @@ import uuid
 from django.conf import settings
 from django.db import models
 
+from api.models.choices import RoleChoices
 
-class Diary(models.Model):
+
+class Schedule(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="diaries",
+        on_delete=models.CASCADE,
+        related_name="schedules",
         verbose_name="ユーザー",
     )
+    role = models.IntegerField("ロール", choices=RoleChoices.choices, default=0)
     title = models.CharField(
         "タイトル",
-        max_length=200,
+        max_length=100,
         blank=True,
         default="",
     )
@@ -25,18 +27,11 @@ class Diary(models.Model):
         blank=True,
         default="",
     )
-    date = models.DateField("日付", auto_now_add=True)
-    image = models.ImageField("写真", upload_to="image/diary", blank=True)
+    date = models.DateField("日付", null=True)
 
     class Meta:
-        verbose_name = "日記"
-        verbose_name_plural = "日記"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["date", "user"],
-                name="one_user_per_date",
-            )
-        ]
+        verbose_name = "スケジュール"
+        verbose_name_plural = "スケジュール"
 
     def __str__(self) -> str:
         return str(self.id)
