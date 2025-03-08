@@ -29,23 +29,25 @@ class DiaryViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         request.data.update(user=request.user.pk)
-        created_data = super().create(request, *args, **kwargs)
         image_content = request.data["image"]
-        image_url = created_data.data["image"] if image_content else ""
+        serializer = self.get_serializer_class()
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        image_url = serializer.validated_data.get("image", "")
         info = get_text_from_image(image_url)
         insert(
             self.text_collection,
             [ImageInfo(image_path=image_url, info=info)],
             SearchModel.TEXT,
         )
-        # 画像があれば、画像情報をRAG検索出来るように保存
-        if image_content:
+        # 画像があり、かつ画像が保存できていたら、画像情報をRAG検索出来るように保存
+        if image_content and image_url != "":
             insert(
                 self.image_collection,
                 [ImageInfo(image_path=image_url, info=info)],
                 SearchModel.IMAGE_TEXT,
             )
-        return created_data
+        return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         date = self.kwargs.get("pk")
