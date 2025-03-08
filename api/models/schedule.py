@@ -3,6 +3,8 @@ import uuid
 from django.conf import settings
 from django.db import models
 
+from api.models.choices import RoleChoices
+
 
 class Schedule(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -11,6 +13,13 @@ class Schedule(models.Model):
         on_delete=models.CASCADE,
         related_name="schedules",
         verbose_name="ユーザー",
+    )
+    role = models.IntegerField("ロール", choices=RoleChoices.choices, default=0)
+    title = models.CharField(
+        "タイトル",
+        max_length=100,
+        blank=True,
+        default="",
     )
     content = models.CharField(
         "内容",
