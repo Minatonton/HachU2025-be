@@ -3,6 +3,7 @@ from rest_framework.routers import SimpleRouter
 
 from api.views.chat import ChatViewSet
 from api.views.diary import DiaryViewSet
+from api.views.gen_image import GenImageView
 from api.views.schedule import ScheduleViewSet
 from api.views.section import SectionViewSet
 
@@ -18,4 +19,5 @@ router.register("schedule", ScheduleViewSet, basename="schedule")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("gen_image/", GenImageView.as_view(), name="gen_image"),
 ]
