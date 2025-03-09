@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_list_or_404, get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -51,7 +51,11 @@ class DiaryViewSet(ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, *args, **kwargs):
-        date = self.kwargs.get("pk")
-        instance = get_object_or_404(Diary, date=date)
+        query_key = self.kwargs.get("pk")
+        if len(query_key) == 10:
+            instance = get_list_or_404(Diary, date=query_key)
+            serializer = self.get_serializer(instance, many=True)
+            return Response(serializer.data)
+        instance = get_object_or_404(Diary, id=query_key)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

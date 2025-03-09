@@ -31,12 +31,6 @@ class Diary(models.Model):
     class Meta:
         verbose_name = "日記"
         verbose_name_plural = "日記"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["date", "user"],
-                name="one_user_per_date",
-            )
-        ]
 
     def __str__(self) -> str:
         return str(self.id)
