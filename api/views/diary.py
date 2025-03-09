@@ -30,23 +30,24 @@ class DiaryViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         request.data.update(user=request.user.pk)
+        serializer = self.get_serializer(data=request.data)
         image_content = request.data["image"]
-        serializer = self.get_serializer_class()
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        image_url = serializer.data.get("image", "")
-        info = get_text_from_image(image_url)
+        image_url = serializer.data.get("image", "") if image_content != "" else ""
+        text_info = request.data["content"]
+        image_info = get_text_from_image(image_url) if image_url != "" else ""
         id = serializer.data.get("id")
         insert(
             self.text_collection,
-            [ImageInfo(id=id, image_path=image_url, info=info)],
+            [ImageInfo(id=id, image_path=image_url, info=text_info)],
             SearchModel.TEXT,
         )
         # 画像があり、かつ画像が保存できていたら、画像情報をRAG検索出来るように保存
-        if image_content and image_url != "":
+        if image_url and image_url != "":
             insert(
                 self.image_collection,
-                [ImageInfo(id=id, image_path=image_url, info=info)],
+                [ImageInfo(id=id, image_path=image_url, info=image_info)],
                 SearchModel.IMAGE_TEXT,
             )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -61,12 +62,11 @@ class DiaryViewSet(ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    def destroy(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         id = self.kwargs.get("pk")
-        instance = self.get_object_or_404(Diary, id=id)
+        instance = get_object_or_404(Diary, id=id)
         self.perform_destroy(instance)
         self.text_collection.data.delete_by_id(id)
-        image = instance.data.get("image", None)
-        if image:
+        if instance.image:
             self.image_collection.data.delete_by_id(id)
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -32,7 +32,7 @@ def insert(
 
     elif search_model == SearchModel.TEXT:
         for src_obj in data:
-            collection.add_object(
+            collection.data.insert(
                 properties={"info": src_obj.info, "image_path": src_obj.image_path},
                 uuid=str(src_obj.id),
             )
