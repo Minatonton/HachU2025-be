@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from weaviate.collections.collection import Collection
 
 from src.rag.client import client
@@ -21,23 +23,26 @@ def insert(
                     "image": poster_b64,  # Add the image in base64 encoding
                     "image_path": src_obj.image_path,
                 }
-
                 # The model provider integration will automatically vectorize the object
                 batch.add_object(
                     properties=weaviate_obj,
+                    uuid=str(src_obj.id),
                     # vector=vector  # Optionally provide a pre-obtained vector
                 )
 
     elif search_model == SearchModel.TEXT:
-        data_for_insert = [info.model_dump() for info in data]
-        collection.data.insert_many(data_for_insert)
+        for src_obj in data:
+            collection.add_object(
+                properties={"info": src_obj.info, "image_path": src_obj.image_path},
+                uuid=str(src_obj.id),
+            )
 
 
 if __name__ == "__main__":
     search_model = SearchModel.TEXT
     data = [
-        ImageInfo(image_path="src/data/dog.png", info="This is a picture of dog"),
-        ImageInfo(image_path="src/data/cat.png", info="This is a picture of cat"),
+        ImageInfo(id=uuid4(), image_path="src/data/dog.png", info="This is a picture of dog"),
+        ImageInfo(id=uuid4(), image_path="src/data/cat.png", info="This is a picture of cat"),
     ]
     collection = setup("text_search_model_sample", search_model=search_model)
     insert(collection, data, search_model=search_model)
