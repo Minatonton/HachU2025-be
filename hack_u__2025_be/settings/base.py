@@ -15,6 +15,9 @@ DEBUG = strtobool(os.getenv("DEBUG", "n"))
 
 ALLOWED_HOSTS = split_to_list(os.getenv("ALLOWED_HOSTS", ""))
 
+CORS_ALLOW_CREDENTIALS = DEBUG
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -168,6 +171,7 @@ REST_AUTH = {
     "JWT_AUTH_REFRESH_COOKIE": "refresh-token",
     "JWT_AUTH_HTTPONLY": False,
     "OLD_PASSWORD_FIELD_ENABLED": True,
+    "JWT_AUTH_RETURN_EXPIRATION": True,
 }
 
 # djangorestframework-simplejwt
