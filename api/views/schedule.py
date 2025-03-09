@@ -1,3 +1,6 @@
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, mixins
 
 from api.models import Schedule
@@ -24,3 +27,10 @@ class ScheduleViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericVie
     def create(self, request, *args, **kwargs):
         request.data.update(user=request.user.pk)
         return super().create(request, *args, **kwargs)
+
+    @action(detail=False, methods=["POST"])
+    def suggest(self, request, *args, **kwargs):
+        text = request.data.get("text", "")
+        queryset = Schedule.objects.filter(user=request.user)[:5]
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
