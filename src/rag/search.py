@@ -14,7 +14,7 @@ def search(
         limit=limit,
     )
     assert isinstance(response, QueryReturn)
-    return [ImageInfo(**obj.properties) for obj in response.objects]  # type: ignore
+    return [ImageInfo(**obj.properties, id=obj.uuid) for obj in response.objects]  # type: ignore
 
 
 def search_with_filter(
@@ -38,7 +38,7 @@ def search_with_filter(
             if obj.metadata.certainty is not None and certainty_threshold <= obj.metadata.certainty
         ]
 
-    return [ImageInfo(**obj.properties) for obj in response.objects]  # type: ignore
+    return [ImageInfo(**obj.properties, id=obj.uuid) for obj in response.objects]  # type: ignore
 
 
 def search_hybrid(
@@ -62,7 +62,7 @@ def search_hybrid(
             if obj.metadata.certainty is not None and certainty_threshold <= obj.metadata.certainty
         ]
 
-    return [ImageInfo(**obj.properties) for obj in response.objects]  # type: ignore
+    return [ImageInfo(**obj.properties, id=obj.uuid) for obj in response.objects]  # type: ignore
 
 
 def search_bm25(
@@ -86,7 +86,7 @@ def search_bm25(
             if obj.metadata.certainty is not None and certainty_threshold <= obj.metadata.certainty
         ]
 
-    return [ImageInfo(**obj.properties) for obj in response.objects]  # type: ignore
+    return [ImageInfo(**obj.properties, id=obj.uuid) for obj in response.objects]  # type: ignore
 
 
 if __name__ == "__main__":

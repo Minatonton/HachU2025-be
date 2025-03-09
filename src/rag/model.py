@@ -1,7 +1,10 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 
 
 class ImageInfo(BaseModel):
+    id: UUID
     image_path: str
     info: str
 
