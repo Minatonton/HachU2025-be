@@ -3,6 +3,7 @@ from textwrap import dedent
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from duckduckgo_search import DDGS
 from openai import OpenAI
 from pydantic import BaseModel
 
@@ -18,24 +19,42 @@ class ScheduleResponce(BaseModel):
     schedules: list[Schedule]
 
 
+class Condition(BaseModel):
+    region: str
+    kind: str
+
+
+class SearchResoponse(BaseModel):
+    condition: Condition
+    search_word: str
+
+
 class ScheduleGenerator:
     def __init__(self):
         self.client = OpenAI()
 
-    def generate(self) -> list[Schedule]:
-        return
+    def generate(self, text: str) -> list[Schedule]:
+        search_word = self._suggest(text)
+        url = self._search_web_by_duckduckgo(search_word)
 
-    def _suggest(self):
+        return self._check_web(url)
+
+    def _suggest(self, text: str):
         system_prompt = "あなたはuserに予定を提案する役割です。"
-        user_prompt = """
+        user_prompt = f"""
         # 指示
         - [ユーザーの志望]に基づいて、提案する[条件]を大まかに設定してください。
         - 特に指定のない場合、地域はユーザーの現在地付近としてください
         - 種類は[観光, ショッピング, 食事, 文化体験]からあなたが最も適切なものを選んでください。
-        - 条件に基づいて、google places apiで検索をするのに適切なワードを決めてください
+        - 条件に基づいて、google custom search apiで検索をするのに適切なワードを決めてください
+        - ユーザーの質問に対して、その回答を効率よく見つけるために検索エンジンに与える検索ワードを抽出し生成してください。
+        - [条件]から、主要なキーワードやテーマを識別し、それに関する適切な出力として検索ワードをまとめてください。
+        - 各検索ワードは目的の答えや情報を効率的に見つけるための主要要素を含むべきです。
+        - 質問の中で英語を指定してきても、検索ワードは日本語で提示してください。
+        - 検索ワードの候補を3つ出してください。検索エンジンに与えたときに最も回答を見つける可能性の高い検索ワードを1番目に出してください。
 
         # ユーザーの志望
-        京都の旅館に泊まりたい、あと食事も
+        {text}
 
         # ユーザーの現在地
         大阪府大阪市梅田
@@ -45,32 +64,47 @@ class ScheduleGenerator:
         - 地域
         - 種類
         """
-        response = self.client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": dedent(user_prompt)},
-            ],
-        )
-        print(response.choices[0].message.content)
-        # response = self.client.beta.chat.completions.parse(
-        #     model="gpt-4o-2024-08-06",
+        # response = self.client.chat.completions.create(
+        #     model="gpt-4o",
         #     messages=[
         #         {"role": "system", "content": system_prompt},
         #         {"role": "user", "content": dedent(user_prompt)},
         #     ],
-        #     response_format=ImageGenInfo,
         # )
-        return
+        # print(response.choices[0].message.content)
+        response = self.client.beta.chat.completions.parse(
+            model="gpt-4o-2024-08-06",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": dedent(user_prompt)},
+            ],
+            response_format=SearchResoponse,
+        )
+        search_responce = response.choices[0].message.parsed
+        assert isinstance(search_responce, SearchResoponse)
+        print(search_responce)
+        return search_responce.search_word
 
     def _search_db(self):
         """dbを検索"""
         return
 
-    def _search_web(self, query: str):
-        """duckduckgoのweb検索"""
+    def _search_web_by_duckduckgo(self, query: str):
+        """duckduckgoのweb検索, urlを返す"""
         # 一旦scriptに書いてある
-        return
+        with DDGS() as ddgs:
+            results = list(
+                ddgs.text(
+                    keywords=query,  # 検索ワード
+                    region="jp-jp",  # リージョン 日本は"jp-jp",指定なしの場合は"wt-wt"
+                    safesearch="off",  # セーフサーチOFF->"off",ON->"on",標準->"moderate"
+                    timelimit=None,  # 期間指定 指定なし->None,過去1日->"d",過去1週間->"w",
+                    # 過去1か月->"m",過去1年->"y"
+                    max_results=1,  # 取得件数
+                )
+            )
+        return results[0]["href"]
+        # レスポンスの表示
 
     def _check_web(self, url: str):
         """urlの内容を受け取って観光地や飲食店をformat化する"""
@@ -83,7 +117,7 @@ class ScheduleGenerator:
         soup = BeautifulSoup(response.text, "html.parser")
 
         # 主要コンテンツを取得（不要なスクリプトやスタイルを削除）
-        for tag in soup(["script", "style", "meta", "link"]):
+        for tag in soup(["script", "style", "meta"]):
             tag.decompose()
 
         text = " ".join(soup.stripped_strings)  # 改行や余分なスペースを削除
@@ -92,21 +126,25 @@ class ScheduleGenerator:
         user_prompt = f"""
         # 指示
         - [参考文書]の場所に関する内容をlist形式でまとめてください。
-        - 要素はtitle, contentの形にしてください
+        - 要素はtitle, contentの形にしてください。
+        - contentにはtitleの内容を100字程度で説明してください。
 
         # 参考文書
         {text}
         """
 
         # 最終はstructured_outputにします
-        response = self.client.chat.completions.create(
-            model="gpt-4o",
+        response = self.client.beta.chat.completions.parse(
+            model="gpt-4o-2024-08-06",
             messages=[
                 {"role": "user", "content": dedent(user_prompt)},
             ],
+            response_format=ScheduleResponce,
         )
+        schedule_responce = response.choices[0].message.parsed
+        assert isinstance(schedule_responce, ScheduleResponce)
 
-        print(response.choices[0].message.content)
+        return schedule_responce.schedules
 
 
 """
@@ -182,7 +220,12 @@ idea
 このリストは、梅田エリアの観光やグルメに関する情報を網羅しています。それぞれのスポットで得られる体験を参考に、梅田観光を楽しんでください。"""
 
 if __name__ == "__main__":
+    from pprint import pprint
+
     sg = ScheduleGenerator()
-    # schedule = sg.generate()
-    sg._check_web("https://osakalucci.jp/umeda-kankou")
+    schedule = sg.generate("どこか東北とかに旅行行きたい。いいプランない？")
+
+    pprint(schedule)
+    # sg._suggest()
+    # sg._check_web("https://osakalucci.jp/umeda-kankou")
     pass
