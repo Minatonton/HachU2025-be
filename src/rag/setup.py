@@ -12,12 +12,12 @@ def setup(collection_name: str, search_model: SearchModel = SearchModel.TEXT) ->
         return client.collections.get(collection_name)
 
     if search_model == SearchModel.IMAGE_TEXT:
+        # image_urlは関係ないのでsearchに含めない
         collection = client.collections.create(
             name=collection_name,
             properties=[
                 Property(name="info", data_type=DataType.TEXT),
                 Property(name="image", data_type=DataType.BLOB),
-                Property(name="image_url", data_type=DataType.TEXT),
             ],
             vectorizer_config=[
                 Configure.NamedVectors.multi2vec_clip(
@@ -26,9 +26,6 @@ def setup(collection_name: str, search_model: SearchModel = SearchModel.TEXT) ->
                     image_fields=[Multi2VecField(name="image", weight=0.9)],
                     text_fields=[
                         Multi2VecField(name="info", weight=0.1),
-                        Multi2VecField(
-                            name="image_url", weight=0
-                        ),  # これは関係ないのでsearchに含めない
                     ],
                 )
             ],

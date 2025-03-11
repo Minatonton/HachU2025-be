@@ -21,7 +21,6 @@ def insert(
                 weaviate_obj = {
                     "info": src_obj.info,
                     "image": poster_b64,  # Add the image in base64 encoding
-                    "image_url": src_obj.image_url,
                 }
                 # The model provider integration will automatically vectorize the object
                 batch.add_object(
@@ -39,19 +38,14 @@ def insert(
 
 
 if __name__ == "__main__":
-    search_model = SearchModel.TEXT
+    search_model = SearchModel.IMAGE_TEXT
     data = [
         ImageInfo(
             id=uuid4(),
-            image_url="https://www.illust-box.jp/db_img/sozai/00010/108487/watermark.jpg",
+            image_url="https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             info="This is a picture of dog",
         ),
-        ImageInfo(
-            id=uuid4(),
-            image_url="https://png.pngtree.com/png-clipart/20230623/original/pngtree-happy-cute-cat-vector-png-image_9205055.png",
-            info="This is a picture of cat",
-        ),
     ]
-    collection = setup("text_search_model_sample", search_model=search_model)
+    collection = setup("image_search_model_sample", search_model=search_model)
     insert(collection, data, search_model=search_model)
     client.close()
