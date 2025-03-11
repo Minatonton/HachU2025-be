@@ -9,8 +9,8 @@ from src.rag.search_model import SearchModel
 
 def get_dog_cat_data() -> list[ImageInfo]:
     data: list[ImageInfo] = [
-        ImageInfo(image_path="src/data/dog.png", info="犬の写真だよ"),
-        ImageInfo(image_path="src/data/cat.png", info="猫の写真だよ"),
+        ImageInfo(image_url="src/data/dog.png", info="犬の写真だよ"),
+        ImageInfo(image_url="src/data/cat.png", info="猫の写真だよ"),
     ]
     return data
 
@@ -27,18 +27,18 @@ def get_data_1() -> list[ImageInfo]:
     for img_path in img_path_list:
         img_description = get_text_from_image(img_path)
         print(img_description)
-        data.append(ImageInfo(image_path=str(img_path), info=img_description))
+        data.append(ImageInfo(image_url=str(img_path), info=img_description))
     return data
 
 
 def get_data_1_no_api() -> list[ImageInfo]:
     data: list[ImageInfo] = [
         ImageInfo(
-            image_path="scripts/poc_search_image/data/IMG_1611.jpg",
+            image_url="scripts/poc_search_image/data/IMG_1611.jpg",
             info="この画像には、コンサートホールの内部が写っています。ステージには椅子や楽器が並べられており、コンサートの準備が行われているようです。観客席には人々が座っており、ホールの構造が見えます。背景には大きなパイプオルガンも見えます。",
         ),
         ImageInfo(
-            image_path="scripts/poc_search_image/data/IMG_1755.jpg",
+            image_url="scripts/poc_search_image/data/IMG_1755.jpg",
             info="これはオムライスの画像です。卵がご飯の上に乗っていて、デミグラスソースがかかっています。スプーンも添えられていますね。",
         ),
     ]
@@ -60,7 +60,7 @@ def get_data_2() -> list[ImageInfo]:
     for img_path in img_path_list:
         img_description = get_text_from_image(img_path)
         print(img_description)
-        data.append(ImageInfo(image_path=str(img_path), info=img_description))
+        data.append(ImageInfo(image_url=str(img_path), info=img_description))
     return data
 
 

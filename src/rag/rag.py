@@ -7,7 +7,6 @@ from src.rag.client import client
 from src.rag.model import ChatModel, ImageInfo, RagResponse
 from src.rag.search import search_with_filter
 from src.rag.search_model import SearchModel
-from src.rag.utils import to_base64
 
 
 class RAG:
@@ -62,7 +61,6 @@ class RAG:
             text_search_results=text_search_results,
             image_search_results=image_search_results,
             chat_history=chat_history,
-            to_base64=to_base64,
         )
         return dedent(prompt)
 

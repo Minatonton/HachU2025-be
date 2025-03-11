@@ -9,7 +9,7 @@ from src.rag.insert import insert
 from src.rag.model import ImageInfo
 from src.rag.search_model import SearchModel
 from src.rag.setup import setup
-from src.rag.utils import get_text_from_image
+from src.rag.utils import get_text_from_image_url
 
 
 class DiaryViewSet(ModelViewSet):
@@ -36,18 +36,18 @@ class DiaryViewSet(ModelViewSet):
         self.perform_create(serializer)
         image_url = serializer.data.get("image", "") if image_content != "" else ""
         text_info = request.data["content"]
-        image_info = get_text_from_image(image_url) if image_url != "" else ""
+        image_info = get_text_from_image_url(image_url) if image_url != "" else ""
         id = serializer.data.get("id")
         insert(
             self.text_collection,
-            [ImageInfo(id=id, image_path=image_url, info=text_info)],
+            [ImageInfo(id=id, image_url=image_url, info=text_info)],
             SearchModel.TEXT,
         )
         # 画像があり、かつ画像が保存できていたら、画像情報をRAG検索出来るように保存
         if image_url and image_url != "":
             insert(
                 self.image_collection,
-                [ImageInfo(id=id, image_path=image_url, info=image_info)],
+                [ImageInfo(id=id, image_url=image_url, info=image_info)],
                 SearchModel.IMAGE_TEXT,
             )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
