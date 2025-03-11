@@ -7,16 +7,16 @@ from openai import OpenAI
 load_dotenv()
 
 
-def encode_image(image_path: Path) -> str:
+def encode_image(image_url: Path) -> str:
     """base64にenocode"""
-    with open(image_path, "rb") as image_file:
+    with open(image_url, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
 
-def get_text_from_image(image_path: Path) -> str:
+def get_text_from_image(image_url: Path) -> str:
     """openaiのapiでimageをtext化する"""
 
-    base64_image = encode_image(image_path)
+    base64_image = encode_image(image_url)
     client = OpenAI()
 
     response = client.chat.completions.create(
@@ -44,6 +44,6 @@ def get_text_from_image(image_path: Path) -> str:
 
 
 if __name__ == "__main__":
-    image_path: Path = Path("src/data/cat.png")
-    text = get_text_from_image(image_path)
+    image_url: Path = Path("src/data/cat.png")
+    text = get_text_from_image(image_url)
     print(text)

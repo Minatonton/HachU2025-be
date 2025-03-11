@@ -17,7 +17,7 @@ def setup(collection_name: str, search_model: SearchModel = SearchModel.TEXT) ->
             properties=[
                 Property(name="info", data_type=DataType.TEXT),
                 Property(name="image", data_type=DataType.BLOB),
-                Property(name="image_path", data_type=DataType.TEXT),
+                Property(name="image_url", data_type=DataType.TEXT),
             ],
             vectorizer_config=[
                 Configure.NamedVectors.multi2vec_clip(
@@ -27,7 +27,7 @@ def setup(collection_name: str, search_model: SearchModel = SearchModel.TEXT) ->
                     text_fields=[
                         Multi2VecField(name="info", weight=0.1),
                         Multi2VecField(
-                            name="image_path", weight=0
+                            name="image_url", weight=0
                         ),  # これは関係ないのでsearchに含めない
                     ],
                 )

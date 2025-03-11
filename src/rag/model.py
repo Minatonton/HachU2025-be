@@ -5,12 +5,12 @@ from pydantic import BaseModel
 
 class ImageInfo(BaseModel):
     id: UUID
-    image_path: str
+    image_url: str
     info: str
 
     def __str__(self) -> str:
         return f"""
-画像(Path): {self.image_path}
+画像(Path): {self.image_url}
 情報: {self.info}
         """
 
