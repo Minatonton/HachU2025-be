@@ -36,7 +36,7 @@ class ChatViewSet(mixins.CreateModelMixin, GenericViewSet):
             for chat in chat_instances
         ] + [ChatModel(role="user", content=content)]
         response = self.rag_model.get_resonse(chat_instances_for_rag)
-        res_chat = Chat.objects.create(section=section_instance, content=response, role=1)
+        res_chat = Chat.objects.create(section=section_instance, content=response.response, role=1)
         res_serializer = self.get_serializer(res_chat)
         return Response(res_serializer.data, status=status.HTTP_201_CREATED)
 
