@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel
 
+from src.rag.utils import image_url_to_base64
+
 load_dotenv()
 
 
@@ -25,6 +27,14 @@ class ImageGenerator:
         """promptからimg生成し,urlを返す"""
         prompt = self._gen_prompt(diary_text)
         return self._call_api(prompt)
+
+    def gen_base64(self, diary_text: str) -> str:
+        """base64で返す"""
+        prompt = self._gen_prompt(diary_text)
+        url = self._call_api(prompt)
+        print(url)
+
+        return image_url_to_base64(url, max_height=1000, max_width=1000)
 
     def _gen_prompt(self, diary_text: str) -> str:
         system_prompt = "あなたはデザイナーです。DALL-E3でイメージに沿った画像を生成するためのプロンプトを作成してください。"
@@ -81,7 +91,7 @@ class ImageGenerator:
 
 if __name__ == "__main__":
     img_geterator = ImageGenerator()
-    url = img_geterator.generate(
+    base64 = img_geterator.gen_base64(
         "北海道に行って海鮮丼を食べました。マグロとサーモンが載っていておいしかったです。"
     )
-    print(url)
+    print(base64[:100])
