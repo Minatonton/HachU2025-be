@@ -26,6 +26,9 @@ def setup(collection_name: str, search_model: SearchModel = SearchModel.TEXT) ->
                     image_fields=[Multi2VecField(name="image", weight=0.9)],
                     text_fields=[
                         Multi2VecField(name="info", weight=0.1),
+                        Multi2VecField(
+                            name="image_url", weight=0
+                        ),  # これがあることで、rag.pyの検索でのreturnの出し方を、mode:SearchModel毎に変えずに済む
                     ],
                 )
             ],

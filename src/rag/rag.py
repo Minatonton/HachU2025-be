@@ -70,26 +70,17 @@ class RAG:
         text_seaerch_results: list[ImageInfo],
         image_search_results: list[ImageInfo],
     ) -> RagResponse:
-        response = self.openai_client.beta.chat.completions.parse(
-            model="gpt-4o-2024-08-06",
+        response = self.openai_client.chat.completions.create(
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "以下の会話履歴に対する適切な回答を生成してください"},
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": prompt,
-                        },
-                    ],
-                },
+                {"role": "user", "content": prompt},
             ],
-            response_format=RagResponse,
         )
-        formed_response = response.choices[0].message.parsed
-        assert isinstance(formed_response, RagResponse)
+        response_content = response.choices[0].message.content
+        assert isinstance(response_content, str)
         return RagResponse(
-            response=formed_response.response,
+            response=response_content,
             used_info_by_image=image_search_results,
             used_info_by_text=text_seaerch_results,
         )
