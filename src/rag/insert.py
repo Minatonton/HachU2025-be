@@ -21,6 +21,7 @@ def insert(
                 weaviate_obj = {
                     "info": src_obj.info,
                     "image": poster_b64,  # Add the image in base64 encoding
+                    "image_url": src_obj.image_url,
                 }
                 # The model provider integration will automatically vectorize the object
                 batch.add_object(

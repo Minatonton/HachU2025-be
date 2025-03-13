@@ -18,6 +18,7 @@ def setup(collection_name: str, search_model: SearchModel = SearchModel.TEXT) ->
             properties=[
                 Property(name="info", data_type=DataType.TEXT),
                 Property(name="image", data_type=DataType.BLOB),
+                Property(name="image_url", data_type=DataType.TEXT),
             ],
             vectorizer_config=[
                 Configure.NamedVectors.multi2vec_clip(
