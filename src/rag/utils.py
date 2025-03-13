@@ -9,7 +9,7 @@ from PIL import Image
 load_dotenv()
 
 
-def image_url_to_base64(image_url, max_width=400, max_height=200, quality=75):
+def image_url_to_base64(image_url, max_width=200, max_height=100, quality=75):
     response = requests.get(image_url)
     if response.status_code == 200:
         image = Image.open(io.BytesIO(response.content))
