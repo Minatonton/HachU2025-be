@@ -6,6 +6,7 @@ from rest_framework.viewsets import GenericViewSet, mixins
 
 from api.models import Chat, Section
 from api.serializers.chat import ChatSerializer
+from api.views.settings import image_collection_name, text_collection_name
 from src.rag.model import ChatModel
 from src.rag.rag import RAG
 
@@ -13,8 +14,6 @@ from src.rag.rag import RAG
 class ChatViewSet(mixins.CreateModelMixin, GenericViewSet):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    text_collection_name = "text_base64_search_model_sample"
-    image_collection_name = "image_base64_search_model_sample"
     rag_model = RAG(
         collection_name_text=text_collection_name, collection_name_image=image_collection_name
     )

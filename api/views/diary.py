@@ -5,6 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.models import Diary
 from api.serializers.diary import DiaryCreateSerializer, DiarySerializer
+from api.views.settings import image_collection_name, text_collection_name
 from src.rag.insert import insert
 from src.rag.model import ImageInfo
 from src.rag.search_model import SearchModel
@@ -15,8 +16,6 @@ from src.rag.utils import get_text_from_image_url
 class DiaryViewSet(ModelViewSet):
     queryset = Diary.objects.all()
     serializer_class = DiarySerializer
-    text_collection_name = "text_search_model_sample"
-    image_collection_name = "image_search_model_sample"
     text_collection = setup(text_collection_name)
     image_collection = setup(image_collection_name)
 
