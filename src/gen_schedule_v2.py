@@ -7,7 +7,7 @@ from pydantic import BaseModel
 load_dotenv()
 
 
-class Schedule(BaseModel):
+class ScheduleWithURL(BaseModel):
     title: str
     content: str
     url: str
@@ -19,19 +19,39 @@ class Schedule(BaseModel):
         yield self.url
 
 
+class SuggestedSchedule(BaseModel):
+    title: str
+    content: str
+
+
 class ScheduleResponce(BaseModel):
-    schedules: list[Schedule]
+    schedules: list[ScheduleWithURL]
     location: str
     kind: str
 
 
-def main(text: str) -> list[str]:
+def main(text: str) -> list[SuggestedSchedule]:
     """
     userの志望から予定を生成する
     text: userの志望。あってもなくてもよい
     list[str]で予定のリストを返す。
     """
 
+    try:
+        schedules = call_api(text)
+    except Exception:
+        schedules = [
+            SuggestedSchedule(
+                title="ケニア",
+                content="元田中エリアの定食屋。コストパフォーマンスが高く、男子大学生に人気です。\nhttps://campus-map.jp/kyoto/article/037/",
+            ),
+            SuggestedSchedule(title="エラー", content="エラーが起きました"),
+        ]
+
+    return schedules
+
+
+def call_api(text: str) -> list[SuggestedSchedule]:
     client = OpenAI()
     system_prompt: str = """
     ユーザーにお勧めする予定を複数答えてください。
@@ -80,10 +100,12 @@ def main(text: str) -> list[str]:
 
     res = completion.choices[0].message.parsed
     assert isinstance(res, ScheduleResponce)
-    print(res, end="\n\n\n")
+    # print(res, end="\n\n\n")
     schedules = res.schedules
 
-    fixed_schedules: list[str] = ["\n".join(list(e)) for e in schedules]
+    fixed_schedules: list[SuggestedSchedule] = [
+        SuggestedSchedule(title=e.title, content=e.content + e.url) for e in schedules
+    ]
     return fixed_schedules
 
 
