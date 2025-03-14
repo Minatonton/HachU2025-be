@@ -34,3 +34,11 @@ class ScheduleViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericVie
         queryset = Schedule.objects.filter(user=request.user)[:5]
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["PATCH"], url_path="bulk-register")
+    def bulk_is_register(self, request, *args, **kwargs):
+        ids = request.data.get("ids", [])
+        if not ids:
+            return Response({"error": "IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
+        Schedule.objects.filter(id__in=ids).update(is_registered=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
