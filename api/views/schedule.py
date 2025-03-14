@@ -5,6 +5,7 @@ from rest_framework.viewsets import GenericViewSet, mixins
 
 from api.models import Schedule
 from api.serializers.schedule import ScheduleSerializer
+from src.gen_schedule_v2 import main as GenerateSchedule
 
 
 class ScheduleViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
@@ -31,7 +32,20 @@ class ScheduleViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericVie
     @action(detail=False, methods=["POST"])
     def suggest(self, request, *args, **kwargs):
         text = request.data.get("text", "")
-        queryset = Schedule.objects.filter(user=request.user)[:5]
+        date = request.data.get("date", "")
+        suggested_schedules = GenerateSchedule(text=text)
+        Schedule.objects.bulk_create(
+            [
+                Schedule(
+                    user=request.user,
+                    date=date,
+                    title=schedule.title,
+                    content=schedule.content,
+                )
+                for schedule in suggested_schedules
+            ]
+        )
+        queryset = Schedule.objects.filter(is_registered=False)[:2]
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -40,5 +54,5 @@ class ScheduleViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericVie
         ids = request.data.get("ids", [])
         if not ids:
             return Response({"error": "IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
-        Schedule.objects.filter(id__in=ids).update(is_registered=True)
+        Schedule.objects.filter(id__in=ids).update(is_registered=True, user=request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
