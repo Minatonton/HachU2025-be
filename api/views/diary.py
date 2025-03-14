@@ -1,6 +1,7 @@
-import pytz
+from datetime import date
+
 from django.shortcuts import get_list_or_404, get_object_or_404
-from django.utils.timezone import datetime, make_aware
+from django.utils.timezone import datetime
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -57,7 +58,7 @@ class DiaryViewSet(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         query_key = self.kwargs.get("pk")
         if len(query_key) == 10:
-            instance = get_list_or_404(Diary, date__date=query_key)  # 日にちで検索
+            instance = get_list_or_404(Diary, date=query_key)  # 日にちで検索
             serializer = self.get_serializer(instance, many=True)
             return Response(serializer.data)
         instance = get_object_or_404(Diary, id=query_key)
@@ -77,6 +78,6 @@ class DiaryViewSet(ModelViewSet):
         # 日付の形式を修正し、タイムゾーンを設定
         try:
             native_date = datetime.strptime(value, "%Y-%m-%d-%H:%M")
-            return make_aware(native_date, pytz.UTC)
+            return date(native_date.year, native_date.month, native_date.day)
         except BaseException:
             raise ValueError("Invalid date format") from None
