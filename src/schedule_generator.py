@@ -39,6 +39,12 @@ class ScheduleGenerator:
 
         return self._check_web(url)
 
+    def _gen_by_duckduckgo(self, text: str) -> list[Schedule]:
+        search_word = self._suggest(text)
+        url = self._search_web_by_duckduckgo(search_word)
+
+        return self._check_web(url)
+
     def _suggest(self, text: str):
         system_prompt = "あなたはuserに予定を提案する役割です。"
         user_prompt = f"""
@@ -145,6 +151,9 @@ class ScheduleGenerator:
         assert isinstance(schedule_responce, ScheduleResponce)
 
         return schedule_responce.schedules
+
+    def gen_by_openai_search(self, text: str) -> list[str]:
+        return []
 
 
 """
