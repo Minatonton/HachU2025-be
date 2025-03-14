@@ -25,7 +25,7 @@ class Diary(models.Model):
         blank=True,
         default="",
     )
-    date = models.DateField("日付", auto_now_add=True)
+    date = models.DateTimeField("日付", auto_now_add=False, auto_now=False)
     image = models.ImageField("写真", upload_to="image/diary", blank=True)
 
     class Meta:
