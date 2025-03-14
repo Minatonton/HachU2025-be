@@ -28,6 +28,8 @@ class Schedule(models.Model):
         default="",
     )
     date = models.DateField("日付", null=True)
+    is_registered = models.BooleanField(default=False)
+    suggest_id = models.UUIDField(default=uuid.uuid4)
 
     class Meta:
         verbose_name = "スケジュール"
