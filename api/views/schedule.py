@@ -13,7 +13,7 @@ class ScheduleViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericVie
     serializer_class = ScheduleSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(user=self.request.user)
+        queryset = super().get_queryset().filter(user=self.request.user, is_registered=True)
         year = self.request.query_params.get("year")
         if year:
             queryset = queryset.filter(date__year=year)
@@ -27,6 +27,7 @@ class ScheduleViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericVie
 
     def create(self, request, *args, **kwargs):
         request.data.update(user=request.user.pk)
+        request.data.update(is_registered=True)
         return super().create(request, *args, **kwargs)
 
     @action(detail=False, methods=["POST"])
